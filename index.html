@@ -108,6 +108,7 @@
   .contacto-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 50px; }
   .datos p { margin-bottom: 16px; }
   .datos strong { color: var(--azul); display: block; font-size: .8rem; letter-spacing: 2px; text-transform: uppercase; }
+  .datos .intro { font-family: var(--titulos); font-size: 1.5rem; color: var(--azul); font-weight: 600; }
   .datos a { color: var(--azul-medio); font-weight: 600; }
   form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   form .ancho { grid-column: 1 / -1; }
@@ -242,13 +243,12 @@
     <p class="subtitulo">Conversemos. Envíanos tus datos y agendemos una reunión para construir la propuesta que mejor se ajuste a tus objetivos patrimoniales.</p>
     <div class="contacto-grid">
       <div class="datos">
-        <p><strong>Contacto</strong>Eugenio Manterola</p>
-        <p><strong>Correo</strong><a href="mailto:emanterola@lemv.cl">emanterola@lemv.cl</a></p>
-        <p><strong>Teléfono / WhatsApp</strong><a href="https://wa.me/56988194752">+56 9 8819 4752</a></p>
+        <p class="intro">Contáctanos a:</p>
+        <p><strong>Correo</strong><a href="mailto:luiseugenio@lemv.cl">luiseugenio@lemv.cl</a></p>
         <p><strong>Oficina</strong>Representaciones Internacionales LLC<br>Florida, USA</p>
       </div>
       <!-- El formulario abre el correo del visitante con el mensaje ya redactado -->
-      <form action="mailto:emanterola@lemv.cl" method="post" enctype="text/plain">
+      <form action="mailto:luiseugenio@lemv.cl" method="post" enctype="text/plain">
         <input type="text" name="Nombre" placeholder="Nombre *" required>
         <input type="text" name="Apellido" placeholder="Apellido *" required>
         <input type="email" name="Correo" placeholder="Email *" required>
