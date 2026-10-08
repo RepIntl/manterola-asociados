@@ -115,6 +115,10 @@
   input, select, textarea { width: 100%; padding: 13px 14px; border: 1px solid #b9c8d8; border-radius: 4px; font: inherit; background: #fbfdff; }
   input:focus, select:focus, textarea:focus { outline: 2px solid var(--celeste); border-color: var(--azul-medio); }
   textarea { min-height: 120px; resize: vertical; }
+  #estado-form { font-weight: 600; }
+  #estado-form.ok { color: #1c7a3f; }
+  #estado-form.error { color: #b3261e; }
+  .boton:disabled { opacity: .6; cursor: wait; }
 
   footer { background: var(--azul); color: #9db4cc; text-align: center; padding: 36px 20px 28px; font-size: .88rem; }
   /* El logo tiene fondo blanco, por eso va sobre una tarjeta blanca en el pie */
@@ -247,14 +251,18 @@
         <p><strong>Correo</strong><a href="mailto:luiseugenio@lemv.cl">luiseugenio@lemv.cl</a></p>
         <p><strong>Oficina</strong>Representaciones Internacionales LLC<br>Florida, USA</p>
       </div>
-      <!-- El formulario abre el correo del visitante con el mensaje ya redactado -->
-      <form action="mailto:luiseugenio@lemv.cl" method="post" enctype="text/plain">
+      <!-- Las consultas llegan por correo a través del servicio FormSubmit (ver el script al final) -->
+      <form id="form-contacto" action="https://formsubmit.co/luiseugenio@lemv.cl" method="POST">
+        <input type="hidden" name="_subject" value="Nueva consulta desde manterolayasociados.com">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
         <input type="text" name="Nombre" placeholder="Nombre *" required>
         <input type="text" name="Apellido" placeholder="Apellido *" required>
-        <input type="email" name="Correo" placeholder="Email *" required>
+        <input type="email" name="email" placeholder="Email *" required>
         <input type="text" name="Pais" placeholder="País *" required>
         <input type="tel" name="Telefono" placeholder="Teléfono *" required>
-        <select name="Linea">
+        <select name="Linea de producto">
           <option>Seguro de Vida</option>
           <option>Seguro de Salud</option>
           <option>Seguro de Viaje</option>
@@ -263,6 +271,7 @@
         </select>
         <textarea class="ancho" name="Detalles" placeholder="Detalles de tu consulta"></textarea>
         <button type="submit" class="boton ancho">Enviar solicitud</button>
+        <p id="estado-form" class="ancho" role="status" aria-live="polite"></p>
       </form>
     </div>
   </div>
@@ -279,5 +288,36 @@
   <br><small>Fotos de portada: Natalya Zaritskaya, Lawrence Crayton, Johny Goerend y Mina Rad. Todas las fotos del sitio provienen de <a href="https://unsplash.com" style="text-decoration:underline">Unsplash</a>.</small>
 </footer>
 
+<script>
+  // Envía el formulario sin salir de la página. Si falla, se muestra el correo de contacto.
+  (function () {
+    var form = document.getElementById('form-contacto');
+    var estado = document.getElementById('estado-form');
+    var boton = form.querySelector('button[type="submit"]');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      boton.disabled = true;
+      estado.className = 'ancho';
+      estado.textContent = 'Enviando...';
+      fetch(form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/'), {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form)
+      })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          if (!res.ok || res.d.success === 'false' || res.d.success === false) { throw new Error(res.d.message || 'error'); }
+          estado.className = 'ancho ok';
+          estado.textContent = '¡Gracias! Recibimos tu consulta y te contactaremos a la brevedad.';
+          form.reset();
+        })
+        .catch(function () {
+          estado.className = 'ancho error';
+          estado.innerHTML = 'No pudimos enviar tu consulta. Por favor escríbenos a <a href="mailto:luiseugenio@lemv.cl" style="text-decoration:underline">luiseugenio@lemv.cl</a>.';
+        })
+        .then(function () { boton.disabled = false; });
+    });
+  })();
+</script>
 </body>
 </html>
